@@ -11,7 +11,7 @@ Returns:
 - **pointer** `number`
 - **hex_pointer** `string`
 ]]
-ni.memory.base_adress = function ()
+ni.memory.base_adress = function()
    return ni.backend.BaseAddress()
 end
 
@@ -45,7 +45,7 @@ Returns:
  
 @param target string
 ]]
-ni.memory.pointer = function (target)
+ni.memory.pointer = function(target)
    return ni.backend.ObjectPointer(target)
 end
 

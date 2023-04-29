@@ -20,18 +20,18 @@ Returns:
 - **off_cooldown** `number`
 ]]
 function ni.runes.status(rune_type)
-	local runes_on_cooldown = 0
-	local runes_off_cooldown = 0
-	for i = 1, 6 do
-		if ni.rune.type(i) == rune_type then
-			if ni.rune.on_cooldown(i) then
-				runes_on_cooldown = runes_on_cooldown + 1
-			else
-				runes_off_cooldown = runes_off_cooldown + 1
-			end
-		end
-	end
-	return runes_on_cooldown, runes_off_cooldown
+   local runes_on_cooldown = 0
+   local runes_off_cooldown = 0
+   for i = 1, 6 do
+      if ni.rune.type(i) == rune_type then
+         if ni.rune.on_cooldown(i) then
+            runes_on_cooldown = runes_on_cooldown + 1
+         else
+            runes_off_cooldown = runes_off_cooldown + 1
+         end
+      end
+   end
+   return runes_on_cooldown, runes_off_cooldown
 end
 
 --[[--
@@ -41,13 +41,13 @@ Returns:
 - **runes_available** `number`
 ]]
 function ni.runes.available()
-	local runes_available = 0
-	for i = 1, 6 do
+   local runes_available = 0
+   for i = 1, 6 do
       if not ni.rune.on_cooldown(i) then
-   		runes_available = runes_available + 1
-		end
-	end
-	return runes_available
+         runes_available = runes_available + 1
+      end
+   end
+   return runes_available
 end
 
 --[[--
@@ -57,15 +57,14 @@ Returns:
 - **death_runes** `number`
 ]]
 function ni.runes.death.count()
-	local death_runes = 0;
-	for i = 1, 6 do
-		if ni.rune.type(i) == 4 then
-			death_runes = death_runes + 1;
-		end
-	end
-	return death_runes;
+   local death_runes = 0;
+   for i = 1, 6 do
+      if ni.rune.type(i) == 4 then
+         death_runes = death_runes + 1;
+      end
+   end
+   return death_runes;
 end
-
 
 --[[--
 Returns the numbers of death runes on cooldown and off cooldown
@@ -75,7 +74,7 @@ Returns:
 - **death_off_cooldown** `number` 
 ]]
 function ni.runes.death.status()
-	return ni.runes.status(4)
+   return ni.runes.status(4)
 end
 
 --[[--
@@ -86,7 +85,7 @@ Returns:
 - **frost_off_cooldown** `number` 
 ]]
 function ni.runes.frost.status()
-	return ni.runes.status(3)
+   return ni.runes.status(3)
 end
 
 --[[--
@@ -97,7 +96,7 @@ Returns:
 - **unholy_off_cooldown** `number` 
 ]]
 function ni.runes.unholy.status()
-	return ni.runes.status(2)
+   return ni.runes.status(2)
 end
 
 --[[--
@@ -108,5 +107,5 @@ Returns:
 - **blood_off_cooldown** `number` 
 ]]
 function ni.runes.blood.status()
-	return ni.runes.status(1)
+   return ni.runes.status(1)
 end

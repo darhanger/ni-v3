@@ -6,6 +6,8 @@ ni.pet = {}
 
 local GetPetActionInfo = ni.client.get_function("GetPetActionInfo")
 local GetPetActionCooldown = ni.client.get_function("GetPetActionCooldown")
+local GetPetHappiness = ni.client.get_function("GetPetHappiness")
+local IsPetAttackActive = ni.client.get_function("IsPetAttackActive")
 
 --[[--
 Get the pet action info on the bar by index
@@ -79,8 +81,8 @@ end
 --[[--
 Instruct your pet to attack your target.
 ]]
-function ni.pet.attack()
-   return ni.client.call_protected("PetAttack")
+function ni.pet.attack(target)
+   return ni.client.call_protected("PetAttack", target)
 end
 
 --[[--
@@ -91,5 +93,49 @@ Returns:
 ]]
 function ni.pet.current_target()
    return ni.unit.guid("playerpettarget")
+end
+
+--[[--
+Guid of your pet, nil if none
+ 
+Returns:
+- **guid ** `string`
+]]
+function ni.pet.guid()
+   return ni.unit.guid("pet")
+end
+
+--[[--
+Happiness of your pet, nil if none
+ 
+Returns:
+- **happiness ** `int`
+]]
+function ni.pet.happiness()
+   return GetPetHappiness()
+end
+
+--[[--
+Returns is pet attack active
+ 
+Returns:
+- **attack_active ** `boolean`
+]]
+function ni.pet.is_attack_active()
+   return IsPetAttackActive()
+end
+
+--[[--
+Is your pet in valid state to function
+ 
+Returns:
+- **is_valid ** `boolean`
+]]
+function ni.pet.is_valid()
+   if ni.unit.exists("pet") and not ni.unit.is_dead_or_ghost("pet") and not ni.unit.is_silenced("pet") and
+      not ni.unit.is_pacified("pet") and not ni.unit.is_stunned("pet") and not ni.unit.is_fleeing("pet") then
+      return true
+   end
+   return false
 end
 

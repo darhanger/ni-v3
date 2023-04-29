@@ -26,9 +26,7 @@ Parameters:
 ]]
 local function event_handler(self, event, ...)
    for i = 1, items_in_table do
-      if event_handlers[i].name == event then
-         event_handlers[i].handler(event, ...)
-      end
+      event_handlers[i].handler(event, ...)
    end
 end
 

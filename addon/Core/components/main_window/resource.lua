@@ -295,7 +295,7 @@ update_resources = function()
          v.element.Checked = true
       elseif current_resources == 0 and v.value == 0 then
          v.element.Checked = true
-      elseif v.value ~=-1 and ni.utilities.has_bit(current_resources, v.value) then
+      elseif v.value ~= -1 and ni.utilities.has_bit(current_resources, v.value) then
          v.element.Checked = true
       else
          v.element.Checked = false

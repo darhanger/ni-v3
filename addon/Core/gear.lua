@@ -8,7 +8,6 @@ ni.gear = {}
 local GetInventoryItemID = ni.client.get_function("GetInventoryItemID")
 local GetWeaponEnchantInfo = ni.client.get_function("GetWeaponEnchantInfo")
 
-
 --[[--
 Uses the inventory item by slot id.
  

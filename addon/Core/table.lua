@@ -5,6 +5,8 @@ local ni = ...
 ni.table = {}
 
 local type = ni.client.get_function("type")
+local tinsert = ni.client.get_function("tinsert", "insert")
+local tremove = ni.client.get_function("tremove", "remove")
 
 --[[--
 Gets the next key/value pair from a table.
@@ -135,7 +137,9 @@ Returns:
 ]]
 function ni.table.length(table)
    local count = 0
-   for _ in ni.table.pairs(table) do count = count + 1 end
+   for _ in ni.table.pairs(table) do
+      count = count + 1
+   end
    return count
 end
 
@@ -163,4 +167,17 @@ function ni.table.owipe(table)
    for k, v in ni.table.opairs(table) do
       table[k] = nil
    end
+end
+
+--[[--
+Insert into table
+ 
+Parameters:
+- **table** `table`
+- **value** 
+@param table table
+@param value value
+]]
+function ni.table.insert(table, value)
+   tinsert(table, value)
 end

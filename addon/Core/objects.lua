@@ -17,7 +17,11 @@ Parameters:
 @param n
 ]]
 local function enumerate(t, g, n)
-   local enumeration_table = {type = t, guid = g, name = n}
+   local enumeration_table = {
+      type = t,
+      guid = g,
+      name = n
+   }
    ni.objects[g] = enumeration_table
 end
 

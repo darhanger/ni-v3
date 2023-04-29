@@ -10,7 +10,7 @@ if not ni.loaded_init then
       "utilities.lua",
       "memory.lua",
       "table.lua",
-      "events.lua",
+      "events.lua"
    }
 
    -- Load the utilities table for use
@@ -31,47 +31,67 @@ if not ni.loaded_init then
    ni.frame = ni.client.get_function("CreateFrame")("frame", nil, UIParent)
    ni.frame:RegisterAllEvents()
    ni.backend.ProtectFrame(ni.frame, UIParent)
-   ni.events.initialize()
 
+   -- As long as the files table isn't inserted to or removed from it'll stay in this order
    local core_files = {
-      "input.lua",
-      "world.lua",
-      "navigation.lua",
-      "item.lua",
+      "events.lua",
       "gear.lua",
-      "object.lua",
-      "power.lua",
-      "rune.lua",
-      "runes.lua",
-      "unit.lua",
-      "player.lua",
-      "spell.lua",
-      "update.lua",
-      "objects.lua",
       "group.lua",
+      "input.lua",
+      "item.lua",
       "members.lua",
       "mount.lua",
+      "navigation.lua",
+      "object.lua",
+      "objects.lua",
       "pet.lua",
-      "totem.lua",
-      "settings.lua",
-      "profiles.lua",
+      "player.lua",
+      "power.lua",
       "profile.lua",
+      "profiles.lua",
+      "rune.lua",
+      "runes.lua",
+      "settings.lua",
+      "spell.lua",
+      "totem.lua",
       "ui.lua",
+      "unit.lua",
+      "update.lua",
+      "world.lua"
    }
 
-   -- We run this when in game so that all functions such as getting guid return valid results
-   ni.load_core = function()
-      -- Load each of the core files here
-      for _, file in ni.table.pairs(core_files) do
-         local _,
-            error = ni.io.load_file(core_path .. file, file)
+   function ni.load_files(files_to_load)
+      local base_path = ni.backend.GetBaseFolder()
+      local core_path = base_path .. "addon\\core\\"
+      for _, file in ni.table.pairs(files_to_load) do
+         local _, error = ni.io.load_file(core_path .. file, file)
          if error then
             ni.backend.Error(error)
          end
       end
+   end
 
-      ni.update.initialize()
+   ni.load_files(core_files)
 
+   local base_path = ni.backend.GetBaseFolder()
+   local core_path = base_path .. "addon\\core\\"
+
+   ni.events.initialize()
+   ni.update.initialize()
+
+   ni.update.register_callback("OBJECTS", ni.objects.update)
+   ni.update.register_callback("MEMBERS", ni.members.update)
+end
+
+-- Event tracking for if we are in game or not
+ni.in_game = false
+-- Fires when entering the game
+local function core_events(event, ...)
+   if event == "PLAYER_ENTERING_WORLD" then
+      ni.utilities.log("PLAYER_ENTERING_WORLD")
+
+      local base_path = ni.backend.GetBaseFolder()
+      local core_path = base_path .. "addon\\core\\"
       -- Load in the main settings file
       do
          local path = ni.settings.path .. ni.player.guid() .. "_main.json"
@@ -101,39 +121,28 @@ if not ni.loaded_init then
          end
       end
 
-      ni.loaded = true
+      local table_files = {
+         "tables\\spells.lua"
+      }
+      ni.load_files(table_files)
+
+      for k, v in ni.table.pairs(ni.settings.main.profiles) do
+         ni.utilities.log(v)
+         if v.enabled then
+            v.enabled = false
+         end
+      end
    end
 
-   -- Event tracking for if we are in game or not
-   ni.in_game = false
-   -- Fires when entering the game
-   ni.PLAYER_ENTERING_WORLD = function(...)
-      ni.utilities.log("PLAYER_ENTERING_WORLD")
-      ni.in_game = true
-      if not ni.loaded then
-         ni.load_core()
+   if event == "UNIT_SPELLCAST_SENT" then
+      local caster = select(1, ...) == "player"
+      if caster then
+         local spell = select(2, ...)
+         local spell_id = ni.backend.GetSpellID(spell)
+         ni.spell.blocked_spells[spell_id] = ni.client.get_time()
       end
-      -- Start updating members and objects
-      ni.update.register_callback("OBJECTS", ni.objects.update)
-      ni.update.register_callback("MEMBERS", ni.members.update)
    end
-   -- Fires on logout or reload
-   ni.PLAYER_LOGOUT = function(...)
-      ni.utilities.log("PLAYER_LOGOUT")
-      ni.in_game = false
-      ni.update.unregister_callback("OBJECTS")
-      ni.update.unregister_callback("MEMBERS")
-   end
-   -- Fires on map changes ect
-   ni.PLAYER_LEAVING_WORLD = function(...)
-      ni.utilities.log("PLAYER_LEAVING_WORLD")
-      ni.in_game = false
-      ni.update.unregister_callback("OBJECTS")
-      ni.update.unregister_callback("MEMBERS")
-   end
-   -- Register the callbacks for all 3
-   ni.events.register_callback("PLAYER_ENTERING_WORLD", ni.PLAYER_ENTERING_WORLD)
-   ni.events.register_callback("PLAYER_LOGOUT", ni.PLAYER_LOGOUT)
-   ni.events.register_callback("PLAYER_LEAVING_WORLD", ni.PLAYER_LEAVING_WORLD)
-   ni.loaded_init = true
 end
+-- Register the callbacks for all 3
+ni.events.register_callback("core_events", core_events)
+ni.loaded_init = true

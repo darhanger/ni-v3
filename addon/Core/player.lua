@@ -14,7 +14,6 @@ local IsOutdoors = ni.client.get_function("IsOutdoors")
 local IsFlyableArea = ni.client.get_function("IsFlyableArea")
 local build = ni.client.build()
 
-
 --[[--
 Moves the player to the token or coordinates.
  
@@ -176,7 +175,7 @@ Returns:
 @param id number
 ]]
 function ni.player.shapeshift_form_id()
-    return GetShapeshiftFormID()
+   return GetShapeshiftFormID()
 end
 
 --[[--
@@ -210,6 +209,17 @@ Parameters:
 ]]
 function ni.player.cancel_buff(spell, filter)
    return ni.client.call_protected("CancelUnitBuff", "player", spell, filter)
+end
+
+--[[--
+Starts autoattacking specified target
+ 
+Parameters:
+- **target** `string`
+@param target string
+]]
+function ni.player.start_attack(target)
+   return ni.client.call_protected("StartAttack", target)
 end
 
 -- Set ni.players metatable to allow unit functions.

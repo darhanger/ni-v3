@@ -7,18 +7,17 @@ ni.totem = {}
 local GetTotemInfo = ni.client.get_function("GetTotemInfo")
 
 local totem_slot = {
-	["fire"] = 1,
-	["earth"] = 2,
-	["water"] = 3,
-	["air"] = 4,
+   ["fire"] = 1,
+   ["earth"] = 2,
+   ["water"] = 3,
+   ["air"] = 4
 }
 
-local totem_unit =
-{
+local totem_unit = {
    [1] = "totem1",
    [2] = "totem2",
    [3] = "totem3",
-   [4] = "totem4",
+   [4] = "totem4"
 }
 
 --[[--

@@ -6,7 +6,6 @@ ni.object = {}
 
 local build = ni.client.build()
 
-
 --[[--
 Checks if the given object is within game memory
  

@@ -1,0 +1,96 @@
+local ni = ...
+ni.spells = {}
+
+local UnitClass = ni.client.get_function("UnitClass")
+local class, _ = UnitClass("player")
+
+-- local function register_spells(event)
+
+--    if not event == "PLAYER_ENTERING_WORLD" then
+--       return
+--    end
+
+-- COMMON
+ni.spells.common = {}
+ni.spells.auto_attack = ni.backend.GetSpellID("Auto Attack")
+ni.spells.auto_shot = ni.backend.GetSpellID("Auto Shot")
+ni.spells.skinning = ni.backend.GetSpellID("Skinning")
+ni.spells.enchanting = ni.backend.GetSpellID("Enchanting")
+ni.spells.cultivation = ni.backend.GetSpellID("Cultivation")
+ni.spells.dodge = ni.backend.GetSpellID("Dodge")
+ni.spells.dual_wield = ni.backend.GetSpellID("Dual Wield")
+ni.spells.endurance = ni.backend.GetSpellID("Endurance")
+ni.spells.first_aid = ni.backend.GetSpellID("First Aid")
+ni.spells.nature_resistance = ni.backend.GetSpellID("Nature Resistance")
+ni.spells.parry = ni.backend.GetSpellID("Parry")
+ni.spells.war_stomp = ni.backend.GetSpellID("War Stomp")
+
+if class == "Hunter" then
+   ni.spells.arcane_shot = ni.backend.GetSpellID("Arcane Shot")
+   ni.spells.aspect_of_the_dragonhawk = ni.backend.GetSpellID("Aspect of the Dragonhawk")
+   ni.spells.aspect_of_the_hawk = ni.backend.GetSpellID("Aspect of the Hawk")
+   ni.spells.aspect_of_the_monkey = ni.backend.GetSpellID("Aspect of the Monkey")
+   ni.spells.aspect_of_the_viper = ni.backend.GetSpellID("Aspect of the Viper")
+   ni.spells.explosive_trap = ni.backend.GetSpellID("Explosive Trap")
+   ni.spells.feed_pet = ni.backend.GetSpellID("Feed Pet")
+   ni.spells.hunters_mark = ni.backend.GetSpellID("Hunters Mark")
+   ni.spells.mend_pet = ni.backend.GetSpellID("Mend Pet")
+   ni.spells.mongoose_bite = ni.backend.GetSpellID("Mongoose Bite")
+   ni.spells.multishot = ni.backend.GetSpellID("Multi-Shot")
+   ni.spells.raptor_strike = ni.backend.GetSpellID("Raptor Strike")
+   ni.spells.serpent_sting = ni.backend.GetSpellID("Serpent Sting")
+   ni.spells.misdirection = ni.backend.GetSpellID("Misdirection")
+   ni.spells.kill_command = ni.backend.GetSpellID("Kill Command")
+   ni.spells.chimera_shot = ni.backend.GetSpellID("Chimera Shot")
+   ni.spells.silencing_shot = ni.backend.GetSpellID("Silencing Shot")
+   ni.spells.kill_shot = ni.backend.GetSpellID("Kill Shot")
+   ni.spells.aimed_shot = ni.backend.GetSpellID("Aimed Shot")
+   ni.spells.steady_shot = ni.backend.GetSpellID("Steady Shot")
+   ni.spells.bestial_wrath = ni.backend.GetSpellID("Bestial Wrath")
+   ni.spells.volley = ni.backend.GetSpellID("Volley")
+   ni.spells.trueshot_aura = ni.backend.GetSpellID("Trueshot Aura")
+end
+
+if class == "Death Knight" then
+   ni.spells.runeforging = ni.backend.GetSpellID("Runeforging")
+   ni.spells.abominations_might = ni.backend.GetSpellID("Abomination's Might")
+   ni.spells.blood_boil = ni.backend.GetSpellID("Blood Boil")
+   ni.spells.blood_presence = ni.backend.GetSpellID("Blood Presence")
+   ni.spells.blood_strike = ni.backend.GetSpellID("Blood Strike")
+   ni.spells.blood_tap = ni.backend.GetSpellID("Blood Tap")
+   ni.spells.dark_command = ni.backend.GetSpellID("Dark Command")
+   ni.spells.death_pact = ni.backend.GetSpellID("Death Pact")
+   ni.spells.forceful_deflection = ni.backend.GetSpellID("Forceful Deflection")
+   ni.spells.heart_strike = ni.backend.GetSpellID("Heart Strike")
+   ni.spells.pestilence = ni.backend.GetSpellID("Pestilence")
+   ni.spells.rune_tap = ni.backend.GetSpellID("Rune Tap")
+   ni.spells.strangulate = ni.backend.GetSpellID("Strangulate")
+   ni.spells.vampiric_blood = ni.backend.GetSpellID("Vampiric Blood")
+   ni.spells.chains_of_ice = ni.backend.GetSpellID("Chains of Ice")
+   ni.spells.empower_rune_weapon = ni.backend.GetSpellID("Empower Rune Weapon")
+   ni.spells.frost_fever = ni.backend.GetSpellID("Frost Fever")
+   ni.spells.frost_presence = ni.backend.GetSpellID("Frost Presence")
+   ni.spells.horn_of_winter = ni.backend.GetSpellID("Horn of Winter")
+   ni.spells.icebound_fortitude = ni.backend.GetSpellID("Icebound Fortitude")
+   ni.spells.icy_touch = ni.backend.GetSpellID("Icy Touch")
+   ni.spells.improved_icy_talons = ni.backend.GetSpellID("Improved Icy Talons")
+   ni.spells.mind_freeze = ni.backend.GetSpellID("Mind Freeze")
+   ni.spells.obliterate = ni.backend.GetSpellID("Obliterate")
+   ni.spells.path_of_frost = ni.backend.GetSpellID("Path of Frost")
+   ni.spells.rune_strike = ni.backend.GetSpellID("Rune Strike")
+   ni.spells.runic_focus = ni.backend.GetSpellID("Runic Focus")
+   ni.spells.anti_magic_shell = ni.backend.GetSpellID("Anti-Magic Shell")
+   ni.spells.army_of_the_dead = ni.backend.GetSpellID("Army of the Dead")
+   ni.spells.blood_plague = ni.backend.GetSpellID("Blood Plague")
+   ni.spells.death_and_decay = ni.backend.GetSpellID("Death and Decay")
+   ni.spells.death_coil = ni.backend.GetSpellID("Death Coil")
+   ni.spells.death_gate = ni.backend.GetSpellID("Death Gate")
+   ni.spells.death_grip = ni.backend.GetSpellID("Death Grip")
+   ni.spells.death_strike = ni.backend.GetSpellID("Death Strike")
+   ni.spells.plague_strike = ni.backend.GetSpellID("Plague Strike")
+   ni.spells.raise_ally = ni.backend.GetSpellID("Raise Ally")
+   ni.spells.raise_dead = ni.backend.GetSpellID("Raise Dead")
+   ni.spells.unholy_presence = ni.backend.GetSpellID("Unholy Presence")
+end
+
+-- ni.events.register_callback("Spells", register_spells)

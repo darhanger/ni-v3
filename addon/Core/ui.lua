@@ -36,8 +36,6 @@ function ni.ui.window(title, shown)
    return ni.ui.new("Window", title, shown)
 end
 
-
-
 --[[--
 Creates a button.
  

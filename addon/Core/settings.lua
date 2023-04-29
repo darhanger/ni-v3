@@ -6,7 +6,6 @@ local base_path = ni.backend.GetBaseFolder()
 
 ni.settings.path = base_path .. "addon\\settings\\"
 
-
 --[[--
 Saves the settings table to dest as a json file
  
@@ -25,7 +24,7 @@ function ni.settings.save(file, table)
       ni.client.error(jerror)
    end
    if ni.io.save_content(file, json) then
-      ni.utilities.log("ni.settings.save "..file .. json)
+      ni.utilities.log("ni.settings.save " .. file .. json)
       return true
    end
    return false
@@ -51,15 +50,15 @@ function ni.settings.load(file)
       if jerror then
          ni.client.error(jerror)
       end
-      local print_settings = "ni.settings.load ".. file .."\n"
+      local print_settings = "ni.settings.load " .. file .. "\n"
       for k, v in ni.table.pairs(json) do
-        print_settings = print_settings .. "["..k.."] = " .. tostring(v).."\n"
-        if type(v) == "table" then
+         print_settings = print_settings .. "[" .. k .. "] = " .. tostring(v) .. "\n"
+         if type(v) == "table" then
             for k2, v2 in ni.table.pairs(v) do
-               print_settings = print_settings .. "   ["..k2.."] = " .. tostring(v2).."\n"
+               print_settings = print_settings .. "   [" .. k2 .. "] = " .. tostring(v2) .. "\n"
                if type(v2) == "table" then
                   for k3, v3 in ni.table.pairs(v2) do
-                     print_settings = print_settings .. "      ["..k3.."] = " .. tostring(v3).."\n"
+                     print_settings = print_settings .. "      [" .. k3 .. "] = " .. tostring(v3) .. "\n"
                   end
                end
             end
@@ -76,11 +75,11 @@ Default main settings
 ni.settings.main = {
    latency = 200,
    debug_tab = false,
-   keys ={
+   keys = {
       toggle = "F10",
       primary = "F1",
       secondary = "F2",
-      generic = "F3",
+      generic = "F3"
    },
    profiles = {
       primary = {
@@ -94,7 +93,7 @@ ni.settings.main = {
       generic = {
          name = "None",
          enabled = false
-      },
+      }
    }
 }
 

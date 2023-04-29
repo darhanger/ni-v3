@@ -14,7 +14,6 @@ if ni.window then
    local main_tab_manager = ni.ui.tab_manager(main_tab)
    local profile_tab = tab_manager:AddTab("Profile Settings")
    local profile_tab_manager = ni.ui.tab_manager(profile_tab)
-   local active_ui ={}
    do
       -- Setup the main window portion
       local selector_tab = main_tab_manager:AddTab("Selector")
@@ -30,12 +29,9 @@ if ni.window then
             if v.version == build then
                if ni.settings.main.profiles.primary.name == k then
                   combo.Selected = k
-                  if ni.profile[k].has_ui then
-                     if ni.profile[k].has_ui then
-                        local tab = profile_tab_manager:AddTab(k)
-                        ni.profile[k].generate_ui(tab)
-                        active_ui[k] = true
-                     end
+                  if ni.profile[k].has_ui and not ni.profile[k].ui_created then
+                     local tab = profile_tab_manager:AddTab(k)
+                     ni.profile[k].create_ui(tab)
                   end
                end
                combo:Add(k)
@@ -44,12 +40,9 @@ if ni.window then
          combo.Callback = function(selected)
             ni.settings.main.profiles.primary.name = selected
             ni.settings.save(ni.settings.main_path, ni.settings.main)
-            if selected ~= "None" and ni.profile[selected].has_ui  then
-               if not ni.table.contains_key(active_ui, selected) then
-                  local tab = profile_tab_manager:AddTab(selected)
-                  ni.profile[selected].generate_ui(tab)
-                  active_ui[selected] = true
-               end
+            if selected ~= "None" and ni.profile[selected].has_ui and not ni.profile[selected].ui_created then
+               local tab = profile_tab_manager:AddTab(selected)
+               ni.profile[selected].create_ui(tab)
             end
          end
       end
@@ -65,54 +58,49 @@ if ni.window then
             if v.version == build then
                if ni.settings.main.profiles.secondary.name == k then
                   combo.Selected = k
+                  if ni.profile[k].has_ui and not ni.profile[k].ui_created then
+                     local tab = profile_tab_manager:AddTab(k)
+                     ni.profile[k].create_ui(tab)
+                  end
                end
                combo:Add(k)
             end
-            combo.Callback = function(selected)
-               ni.settings.main.profiles.secondary.name = selected
-               ni.settings.save(ni.settings.main_path, ni.settings.main)
-               if selected ~= "None" and ni.profile[selected].has_ui  then
-                  if not ni.table.contains_key(active_ui, selected) then
-                     local tab = profile_tab_manager:AddTab(selected)
-                     ni.profile[selected].generate_ui(tab)
-                     active_ui[selected] = true
-                  end
-               end
+         end
+         combo.Callback = function(selected)
+            ni.settings.main.profiles.secondary.name = selected
+            ni.settings.save(ni.settings.main_path, ni.settings.main)
+            if selected ~= "None" and ni.profile[selected].has_ui and not ni.profile[selected].ui_created then
+               local tab = profile_tab_manager:AddTab(selected)
+               ni.profile[selected].create_ui(tab)
             end
          end
-         do
-            local label = ni.ui.label(selector_tab)
-            label.Text = "Generic Profile"
-            label.Centered = true
-            local combo = ni.ui.combobox(selector_tab)
-            combo.Text = "##generic"
-            combo.Selected = "None"
-            combo:Add("None")
-            for k, v in ni.table.opairs(ni.profiles.generic) do
-               if v.version == build then
-                  if ni.settings.main.profiles.generic.name == k then
-                     combo.Selected = k
-                     if ni.profile[k].has_ui then
-                        if ni.profile[k].has_ui then
-                           local tab = profile_tab_manager:AddTab(k)
-                           ni.profile[k].generate_ui(tab)
-                           active_ui[k] = true
-                        end
-                     end
+      end
+      do
+         local label = ni.ui.label(selector_tab)
+         label.Text = "Generic Profile"
+         label.Centered = true
+         local combo = ni.ui.combobox(selector_tab)
+         combo.Text = "##generic"
+         combo.Selected = "None"
+         combo:Add("None")
+         for k, v in ni.table.opairs(ni.profiles.generic) do
+            if v.version == build then
+               if ni.settings.main.profiles.generic.name == k then
+                  combo.Selected = k
+                  if ni.profile[k].has_ui and not ni.profile[k].ui_created then
+                     local tab = profile_tab_manager:AddTab(k)
+                     ni.profile[k].create_ui(tab)
                   end
-                  combo:Add(k)
                end
+               combo:Add(k)
             end
-            combo.Callback = function(selected)
-               ni.settings.main.profiles.generic.name = selected
-               ni.settings.save(ni.settings.main_path, ni.settings.main)
-               if selected ~= "None" and ni.profile[selected].has_ui  then
-                  if not ni.table.contains_key(active_ui, selected) then
-                     local tab = profile_tab_manager:AddTab(selected)
-                     ni.profile[selected].generate_ui(tab)
-                     active_ui[selected] = true
-                  end
-               end
+         end
+         combo.Callback = function(selected)
+            ni.settings.main.profiles.generic.name = selected
+            ni.settings.save(ni.settings.main_path, ni.settings.main)
+            if selected ~= "None" and ni.profile[selected].has_ui and not ni.profile[selected].ui_created then
+               local tab = profile_tab_manager:AddTab(selected)
+               ni.profile[selected].create_ui(tab)
             end
          end
       end
@@ -157,50 +145,26 @@ if ni.window then
                end
                combo.Callback = combo_callback
             end
-            setup_toggles(
-               "UI Toggle:",
-               "##uitoggle",
-               49,
-               ni.settings.main.keys.toggle,
-               function_keys,
+            setup_toggles("UI Toggle:", "##uitoggle", 49, ni.settings.main.keys.toggle, function_keys,
                function(selected)
                   ni.settings.main.keys.toggle = selected
                   ni.settings.save(ni.settings.main_path, ni.settings.main)
-               end
-            )
-            setup_toggles(
-               "Primary Toggle:",
-               "##primarytoggle",
-               14,
-               ni.settings.main.keys.primary,
-               function_keys,
+               end)
+            setup_toggles("Primary Toggle:", "##primarytoggle", 14, ni.settings.main.keys.primary, function_keys,
                function(selected)
                   ni.settings.main.keys.primary = selected
                   ni.settings.save(ni.settings.main_path, ni.settings.main)
-               end
-            )
-            setup_toggles(
-               "Secondary Toggle:",
-               "##secondarytoggle",
-               nil,
-               ni.settings.main.keys.secondary,
-               function_keys,
+               end)
+            setup_toggles("Secondary Toggle:", "##secondarytoggle", nil, ni.settings.main.keys.secondary, function_keys,
                function(selected)
                   ni.settings.main.keys.secondary = selected
                   ni.settings.save(ni.settings.main_path, ni.settings.main)
-               end
-            )
-            setup_toggles(
-               "Generic Toggle:",
-               "##generictoggle",
-               14,
-               ni.settings.main.keys.generic,
-               function_keys,
+               end)
+            setup_toggles("Generic Toggle:", "##generictoggle", 14, ni.settings.main.keys.generic, function_keys,
                function(selected)
                   ni.settings.main.keys.generic = selected
                   ni.settings.save(ni.settings.main_path, ni.settings.main)
-               end
-            )
+               end)
          end
       end
 
@@ -211,8 +175,7 @@ if ni.window then
          do
             local resource_tab = tracker_tab_manager:AddTab("Resources")
             local resource_file = window_folder .. "resource.lua"
-            local func,
-               err = ni.io.load_buffer(resource_file, string.format("@%s", resource_file))
+            local func, err = ni.io.load_buffer(resource_file, string.format("@%s", resource_file))
             if err then
                ni.backend.Error(err)
             end
@@ -221,8 +184,7 @@ if ni.window then
          do
             local creature_tab = tracker_tab_manager:AddTab("Creatures")
             local creature_file = window_folder .. "creature.lua"
-            local func,
-               err = ni.io.load_buffer(creature_file, string.format("@%s", creature_file))
+            local func, err = ni.io.load_buffer(creature_file, string.format("@%s", creature_file))
             if err then
                ni.backend.Error(err)
             end
@@ -233,76 +195,79 @@ if ni.window then
          local debug_tab = tab_manager:AddTab("Debug")
          do
             local debug_file = window_folder .. "debug.lua"
-            local func,
-               err = ni.io.load_buffer(debug_file, string.format("@%s", debug_file))
+            local func, err = ni.io.load_buffer(debug_file, string.format("@%s", debug_file))
             if err then
                ni.backend.Error(err)
             end
             func(ni, debug_tab)
          end
       end
+      --   local cast_history_tab = tab_manager:AddTab("Cast History")
+      --   local cast_history_file = window_folder .. "cast_history.lua"
+      --   local func, err = ni.io.load_buffer(cast_history_file, string.format("@%s", cast_history_file))
+      --   if err then
+      --     ni.backend.Error(err)
+      --   end
+      --   func(ni, cast_history_tab)
 
       -- Create the callback for toggling the window open and close
-      ni.input.register_callback(
-         "ni-main",
-         function()
-            if ni.input.key_down(ni.settings.main.keys.toggle) then
-               ni.window.Open = not ni.window.Open
+      ni.input.register_callback("ni-main", function()
+         if ni.input.key_down(ni.settings.main.keys.toggle) then
+            ni.window.Open = not ni.window.Open
+            return true
+         end
+         if ni.input.key_down(ni.settings.main.keys.primary) then
+            if ni.settings.main.profiles.primary.name ~= "none" and ni.settings.main.profiles.primary.name ~= "None" then
+               ni.settings.main.profiles.primary.enabled = not ni.settings.main.profiles.primary.enabled
+               if ni.settings.main.profiles.primary.enabled then
+                  ni.update.register_callback(ni.settings.main.profiles.primary.name,
+                     ni.profile[ni.settings.main.profiles.primary.name].execute)
+                  ni.events.register_callback(ni.settings.main.profiles.primary.name,
+                     ni.profile[ni.settings.main.profiles.primary.name].events)
+                  print("Primary started")
+               else
+                  ni.update.unregister_callback(ni.settings.main.profiles.primary.name)
+                  ni.events.unregister_callback(ni.settings.main.profiles.primary.name)
+                  print("Primary stopped")
+               end
                return true
             end
-            if ni.input.key_down(ni.settings.main.keys.primary) then
-               if ni.settings.main.profiles.primary.name ~= "none" and ni.settings.main.profiles.primary.name ~= "None" then
-                  ni.settings.main.profiles.primary.enabled = not ni.settings.main.profiles.primary.enabled
-                  if ni.settings.main.profiles.primary.enabled then
-                     ni.update.register_callback(
-                        ni.settings.main.profiles.primary.name,
-                        ni.profile[ni.settings.main.profiles.primary.name].execute
-                     )
-                     ni.utilities.log(ni.settings.main.profiles.primary.name.. " Started")
-                  else
-                     ni.update.unregister_callback(ni.settings.main.profiles.primary.name)
-                     ni.utilities.log(ni.settings.main.profiles.primary.name.. " Stopped")
-                  end
-                  return true
-               end
-            end
-            if ni.input.key_down(ni.settings.main.keys.secondary) then
-               if
-                  ni.settings.main.profiles.secondary.name ~= "none" and
-                     ni.settings.main.profiles.secondary.name ~= "None"
-                then
-                  ni.settings.main.profiles.secondary.enabled = not ni.settings.main.profiles.secondary.enabled
-                  if ni.settings.main.profiles.secondary.enabled then
-                     ni.update.register_callback(
-                        ni.settings.main.profiles.secondary.name,
-                        ni.profile[ni.settings.main.profiles.secondary.name].execute
-                     )
-                     ni.utilities.log(ni.settings.main.profiles.secondary.name.. " Started")
-                  else
-                     ni.update.unregister_callback(ni.settings.main.profiles.secondary.name)
-                     ni.utilities.log(ni.settings.main.profiles.secondary.name.. " Stopped")
-                  end
-                  return true
-               end
-            end
-            if ni.input.key_down(ni.settings.main.keys.generic) then
-               if ni.settings.main.profiles.generic.name ~= "none" and ni.settings.main.profiles.generic.name ~= "None" then
-                  ni.settings.main.profiles.generic.enabled = not ni.settings.main.profiles.generic.enabled
-                  if ni.settings.main.profiles.generic.enabled then
-                     ni.update.register_callback(
-                        ni.settings.main.profiles.generic.name,
-                        ni.profile[ni.settings.main.profiles.generic.name].execute
-                     )
-                     ni.utilities.log(ni.settings.main.profiles.generic.name.. " Started")
-                  else
-                     ni.update.unregister_callback(ni.settings.main.profiles.generic.name)
-                     ni.utilities.log(ni.settings.main.profiles.generic.name.. " Stopped")
-                  end
-                  return true
-               end
-            end
-            return false
          end
-      )
+         if ni.input.key_down(ni.settings.main.keys.secondary) then
+            if ni.settings.main.profiles.secondary.name ~= "none" and ni.settings.main.profiles.secondary.name ~= "None" then
+               ni.settings.main.profiles.secondary.enabled = not ni.settings.main.profiles.secondary.enabled
+               if ni.settings.main.profiles.secondary.enabled then
+                  ni.update.register_callback(ni.settings.main.profiles.secondary.name,
+                     ni.profile[ni.settings.main.profiles.secondary.name].execute)
+                  ni.events.register_callback(ni.settings.main.profiles.secondary.name,
+                     ni.profile[ni.settings.main.profiles.secondary.name].events)
+                  print("Secondary started")
+               else
+                  ni.update.unregister_callback(ni.settings.main.profiles.secondary.name)
+                  ni.events.unregister_callback(ni.settings.main.profiles.secondary.name)
+                  print("Secondary stopped")
+               end
+               return true
+            end
+         end
+         if ni.input.key_down(ni.settings.main.keys.generic) then
+            if ni.settings.main.profiles.generic.name ~= "none" and ni.settings.main.profiles.generic.name ~= "None" then
+               ni.settings.main.profiles.generic.enabled = not ni.settings.main.profiles.generic.enabled
+               if ni.settings.main.profiles.generic.enabled then
+                  ni.update.register_callback(ni.settings.main.profiles.generic.name,
+                     ni.profile[ni.settings.main.profiles.generic.name].execute)
+                  ni.events.register_callback(ni.settings.main.profiles.generic.name,
+                     ni.profile[ni.settings.main.profiles.generic.name].events)
+                  print("Generic started")
+               else
+                  ni.update.unregister_callback(ni.settings.main.profiles.generic.name)
+                  ni.events.unregister_callback(ni.settings.main.profiles.generic.name)
+                  print("Generic stopped")
+               end
+               return true
+            end
+         end
+         return false
+      end)
    end
 end

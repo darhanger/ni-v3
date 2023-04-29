@@ -14,7 +14,7 @@ if not GetSpellBookItemInfo and build > 12340 then
    ni.backend.Error("Unable to get GetSpellBookItemInfo")
 end
 local GetFlyoutInfo = ni.client.get_function("GetFlyoutInfo")
---local GetFlyoutSlotInfo = ni.client.get_function("GetFlyoutSlotInfo") --Crashing WoW!
+-- local GetFlyoutSlotInfo = ni.client.get_function("GetFlyoutSlotInfo") --Crashing WoW!
 
 local GetSpellName = ni.client.get_function("GetSpellName")
 if not GetSpellName and build == 12340 then
@@ -32,31 +32,24 @@ local function stripname(name)
    return name
 end
 
-
 local dump_ni = ni.ui.button(tab)
 dump_ni.Text = "Ni Dump"
 dump_ni.Callback = function()
    local string_dump = "Ni\n"
    local buffs = ni
    for index, value in ni.table.pairs(buffs) do
-      local b = "["..index.."] "
+      local b = "[" .. index .. "] "
       for i, v in ni.table.pairs(value) do
-         b = b .. tostring(v).. ", "
+         b = b .. tostring(v) .. ", "
          if type(v) == "table" then
             b = b .. "\n --Table: "
             for i2, v2 in ni.table.pairs(v) do
-               b = b .. tostring(v2).. ", "
-               if type(v2) == "table" then
-                  b = b .. "\n   **Table: "
-                  for i3, v3 in ni.table.pairs(v2) do
-                     b = b .. tostring(v3).. ", "
-                  end
-               end
+               b = b .. tostring(v2) .. ", "
             end
          end
       end
-      b = b.."\n"
-      string_dump = string_dump..b
+      b = b .. "\n"
+      string_dump = string_dump .. b
    end
    ni.utilities.log(string_dump)
 end
@@ -92,7 +85,9 @@ object_button.Text = "Dump All"
 object_button.Callback = function()
    local string_dump = "Objects Dump\n"
    for k, v in ni.table.opairs(ni.objects) do
-      string_dump = string_dump .. string.format("[%s] type = %s, guid = %s, name = %s, display_id = %s\n", k, object_type(v.type), v.guid, v.name, ni.object.display_id(k))
+      string_dump = string_dump ..
+                       string.format("[%s] type = %s, guid = %s, name = %s, display_id = %s\n", k, object_type(v.type),
+            v.guid, v.name, ni.object.display_id(k))
    end
    ni.utilities.log(string_dump)
 end
@@ -105,7 +100,9 @@ game_objects.Callback = function()
    for k, v in ni.table.opairs(objects) do
       local distance = ni.player.distanceV3(k)
       if v.type == 5 and distance <= 100 then
-         string_dump = string_dump .. string.format("[%s] name = %s, display_id = %s, distance = %s\n", k, v.name, ni.object.display_id(k), distance)
+         string_dump = string_dump ..
+                          string.format("[%s] name = %s, display_id = %s, distance = %s\n", k, v.name,
+               ni.object.display_id(k), distance)
          for i = 1, 0x8 do
             local d = ni.object.descriptor(k, i)
             if d ~= nil then
@@ -127,9 +124,9 @@ enemies_button.Callback = function()
    local string_dump = "Enemies Dump\n"
    string_dump = string_dump .. string.format("Found %s targets \n", ni.table.length(enemies))
    for k, v in ni.table.opairs(enemies) do
-      string_dump =
-         string_dump ..
-         string.format("[%s] type = %s, guid = %s, name = %s, distance = %s\n", k, v.type, v.guid, v.name, v.distance)
+      string_dump = string_dump ..
+                       string.format("[%s] type = %s, guid = %s, name = %s, distance = %s\n", k, v.type, v.guid, v.name,
+            v.distance)
    end
    ni.utilities.log(string_dump)
 end
@@ -141,9 +138,9 @@ enemies_button_target.Callback = function()
    local string_dump = "Enemies Dump Target\n"
    string_dump = string_dump .. string.format("Found %s targets \n", ni.table.length(enemies))
    for k, v in ni.table.opairs(enemies) do
-      string_dump =
-         string_dump ..
-         string.format("[%s] type = %s, guid = %s, name = %s, distance = %s\n", k, v.type, v.guid, v.name, v.distance)
+      string_dump = string_dump ..
+                       string.format("[%s] type = %s, guid = %s, name = %s, distance = %s\n", k, v.type, v.guid, v.name,
+            v.distance)
    end
    ni.utilities.log(string_dump)
 end
@@ -154,9 +151,9 @@ friends_button.Callback = function()
    local friends = ni.unit.friends_in_range("player", 100)
    local string_dump = "Friends Dump\n"
    for k, v in ni.table.opairs(friends) do
-      string_dump =
-         string_dump ..
-         string.format("[%s] type = %s, guid = %s, name = %s, distance = %s\n", k, v.type, v.guid, v.name, v.distance)
+      string_dump = string_dump ..
+                       string.format("[%s] type = %s, guid = %s, name = %s, distance = %s\n", k, v.type, v.guid, v.name,
+            v.distance)
    end
    ni.utilities.log(string_dump)
 end
@@ -167,12 +164,8 @@ party_button.Callback = function()
    local party = ni.members
    local string_dump = "Party Dump\n"
    for k, v in ni.table.opairs(party) do
-      string_dump =
-         string_dump ..
-         string.format(
-            "[%s] %s, health_percent = %s\n",
-            k,
-            v.name(),
+      string_dump = string_dump ..
+                       string.format("[%s] %s, unit_id = %s, health_percent = %s\n", k, v.name(), v.unit_id,
             v.health_percent())
    end
    ni.utilities.log(string_dump)
@@ -184,13 +177,13 @@ pet_button.Callback = function()
    local has_pet = ni.pet.exists()
    local string_dump = "Pet Dump\n"
    if not has_pet then
-      string_dump = string_dump.."No pet found"
+      string_dump = string_dump .. "No pet found"
    else
-      string_dump = string_dump.."Pet found\n"
+      string_dump = string_dump .. "Pet found\n"
       for i = 1, 10 do
          local name = ni.pet.action_info(i)
          if name then
-            string_dump = string_dump.. string.format("local %s = %s", stripname(name), i)
+            string_dump = string_dump .. string.format("local %s = %s", stripname(name), i)
          end
          string_dump = string_dump .. "\n"
       end
@@ -204,7 +197,9 @@ local unit_flags = ni.ui.button(tab)
 unit_flags.Text = "UnitFlags Player"
 unit_flags.Callback = function()
    local string_dump = "ni.unit.flags Player\n"
-   local flags = {ni.unit.flags("player")}
+   local flags = {
+      ni.unit.flags("player")
+   }
    for k, v in ni.table.pairs(flags) do
       string_dump = string_dump .. string.format("Flag %s: %s\n", k, tostring(flags[v]))
    end
@@ -216,7 +211,9 @@ unit_flags_target.Text = "UnitFlags Target"
 unit_flags_target.Callback = function()
    local t = ni.unit.name("target")
    local string_dump = string.format("ni.unit.flags %s\n", t)
-   local flags = {ni.unit.flags("target")}
+   local flags = {
+      ni.unit.flags("target")
+   }
    for k, v in ni.table.pairs(flags) do
       string_dump = string_dump .. string.format("Flag %s: %s\n", k, tostring(flags[v]))
    end
@@ -227,7 +224,9 @@ local playerDynamicFlags = ni.ui.button(tab)
 playerDynamicFlags.Text = "UnitDynamicFlags Player"
 playerDynamicFlags.Callback = function()
    local string_dump = "ni.unit.dynamic_flags Player\n"
-   local flags = {ni.unit.dynamic_flags("player")}
+   local flags = {
+      ni.unit.dynamic_flags("player")
+   }
    for k, v in ni.table.pairs(flags) do
       string_dump = string_dump .. string.format("Flag %s: %s\n", k, tostring(flags[v]))
    end
@@ -239,7 +238,9 @@ UnitDynamicFlags.Text = "UnitDynamicFlags Target"
 UnitDynamicFlags.Callback = function()
    local t = ni.unit.name("target")
    local string_dump = string.format("ni.unit.dynamic_flags %s\n", t)
-   local flags = {ni.unit.dynamic_flags("target")}
+   local flags = {
+      ni.unit.dynamic_flags("target")
+   }
    for k, v in ni.table.pairs(flags) do
       string_dump = string_dump .. string.format("Flag %s: %s\n", k, tostring(flags[v]))
    end
@@ -268,12 +269,12 @@ player_auras.Callback = function()
    local string_dump = "Player Buffs\n"
    local buffs = ni.player.buffs()
    for index, value in ni.table.pairs(buffs) do
-      local b = "["..index.."] "
+      local b = "[" .. index .. "] "
       for i, v in ni.table.pairs(value) do
-         b = b .."["..i.."]".. tostring(v).. ", "
+         b = b .. "[" .. i .. "]" .. tostring(v) .. ", "
       end
-      b = b.."\n"
-      string_dump = string_dump..b
+      b = b .. "\n"
+      string_dump = string_dump .. b
    end
    ni.utilities.log(string_dump)
 end
@@ -284,12 +285,12 @@ player_auras.Callback = function()
    local string_dump = "Player DeBuffs\n"
    local buffs = ni.player.debuffs()
    for index, value in ni.table.pairs(buffs) do
-      local b = "["..index.."] "
+      local b = "[" .. index .. "] "
       for i, v in ni.table.pairs(value) do
-         b = b .."["..i.."]".. tostring(v).. ", "
+         b = b .. "[" .. i .. "]" .. tostring(v) .. ", "
       end
-      b = b.."\n"
-      string_dump = string_dump..b
+      b = b .. "\n"
+      string_dump = string_dump .. b
    end
    ni.utilities.log(string_dump)
 end
@@ -300,12 +301,12 @@ player_auras.Callback = function()
    local string_dump = "Target Buffs\n"
    local buffs = ni.unit.buffs("target")
    for index, value in ni.table.pairs(buffs) do
-      local b = "["..index.."] "
+      local b = "[" .. index .. "] "
       for i, v in ni.table.pairs(value) do
-         b = b .."["..i.."]".. tostring(v).. ", "
+         b = b .. "[" .. i .. "]" .. tostring(v) .. ", "
       end
-      b = b.."\n"
-      string_dump = string_dump..b
+      b = b .. "\n"
+      string_dump = string_dump .. b
    end
    ni.utilities.log(string_dump)
 end
@@ -316,12 +317,12 @@ player_auras.Callback = function()
    local string_dump = "Target DeBuffs\n"
    local buffs = ni.unit.debuffs("target")
    for index, value in ni.table.pairs(buffs) do
-      local b = "["..index.."] "
+      local b = "[" .. index .. "] "
       for i, v in ni.table.pairs(value) do
-         b = b .."["..i.."]".. tostring(v).. ", "
+         b = b .. "[" .. i .. "]" .. tostring(v) .. ", "
       end
-      b = b.."\n"
-      string_dump = string_dump..b
+      b = b .. "\n"
+      string_dump = string_dump .. b
    end
    ni.utilities.log(string_dump)
 end
@@ -336,70 +337,49 @@ spell_button.Callback = function()
    local pet_string = "--Pet\n"
    local tabs = GetNumSpellTabs()
    for i = 1, tabs do
-      local tabname,
-         _,
-         offset,
-         numSpells,
-         _,
-         offspecID = GetSpellTabInfo(i)
+      local tabname, _, offset, numSpells, _, offspecID = GetSpellTabInfo(i)
       spell_string = spell_string .. string.format("--%s\n", tabname)
       local tabEnd = offset + numSpells
       local dumped_names = {}
       for j = offset + 1, tabEnd do
          if build == 12340 then
-            local spellName, rank = GetSpellName(j, BOOKTYPE_SPELL) --/dump GetSpellName(10, BOOKTYPE_SPELL)
+            local spellName, rank = GetSpellName(j, BOOKTYPE_SPELL) -- /dump GetSpellName(10, BOOKTYPE_SPELL)
             local spellNamePet, rankPet = GetSpellName(j, BOOKTYPE_PET)
             if spellName and not dumped_names[spellName] then
                local spellId = ni.spell.id(spellName)
                if not spellId then
                   spell_string = spell_string .. string.format("  --Failed to get id for %s (%s)\n", spellName, rank)
                end
-               spell_string = spell_string .. string.format("   %s = {id = %s, name = ni.spell.info(%s)},\n",
-                     stripname(spellName),
-                     spellId,
-                     spellId,
-                     spellId
-                  )
-                  dumped_names[spellName] = spellId
+               spell_string = spell_string ..
+                                 string.format("   %s = {id = %s, name = ni.spell.info(%s)},\n", stripname(spellName),
+                     spellId, spellId, spellId)
+               dumped_names[spellName] = spellId
             end
             if spellNamePet and not dumped_names[spellNamePet] then
                local spellId = ni.spell.id(spellNamePet)
                if not spellId then
                   pet_string = pet_string .. string.format("  --Failed to get id for %s (%s)\n", spellNamePet, rankPet)
                end
-               pet_string = pet_string .. string.format("   %s = {id = %s, name = ni.spell.info(%s)},\n",
-                     stripname(spellNamePet),
-                     spellId,
-                     spellId,
-                     spellId
-                  )
-                  dumped_names[spellNamePet] = spellId
+               pet_string = pet_string ..
+                               string.format("   %s = {id = %s, name = ni.spell.info(%s)},\n", stripname(spellNamePet),
+                     spellId, spellId, spellId)
+               dumped_names[spellNamePet] = spellId
             end
          elseif build > 12340 then
             if offspecID == nil or offspecID == 0 then
-               local type,
-                  id = GetSpellBookItemInfo(j, "player")
+               local type, id = GetSpellBookItemInfo(j, "player")
                if type == "FLYOUT" then
-                  local _,
-                     _,
-                     numSlots = GetFlyoutInfo(id)
+                  local _, _, numSlots = GetFlyoutInfo(id)
                   for o = 1, numSlots do
                      local flyoutID = GetFlyoutSlotInfo(id, o)
                      local flyoutname = ni.spell.info(flyoutID)
-                     spell_string =
-                        spell_string ..
-                        string.format(
-                           "   %s = {id = %s, name = ni.spell.info(%s)},\n",
-                           stripname(flyoutname),
-                           flyoutID,
-                           flyoutID,
-                           flyoutID
-                        )
+                     spell_string = spell_string ..
+                                       string.format("   %s = {id = %s, name = ni.spell.info(%s)},\n",
+                           stripname(flyoutname), flyoutID, flyoutID, flyoutID)
                   end
                end
                if (type == "SPELL" or type == "FUTURESPELL") then
-                  local spellname,
-                     rank = ni.spell.info(id)
+                  local spellname, rank = ni.spell.info(id)
                   if not string.match(rank, "Guild") then
                      if (string.match(rank, "Cat")) then
                         spellname = spellname .. "Cat"
@@ -407,9 +387,9 @@ spell_button.Callback = function()
                      if (string.match(rank, "Bear")) then
                         spellname = spellname .. "Bear"
                      end
-                     spell_string =
-                        spell_string ..
-                        string.format("   %s = {id = %s, name = ni.spell.info(%s)},\n", stripname(spellname), id, id, id)
+                     spell_string = spell_string ..
+                                       string.format("   %s = {id = %s, name = ni.spell.info(%s)},\n",
+                           stripname(spellname), id, id, id)
                   end
                end
             end
@@ -417,7 +397,7 @@ spell_button.Callback = function()
       end
    end
    if string.len(pet_string) > 6 then
-      spell_string = spell_string ..pet_string
+      spell_string = spell_string .. pet_string
    end
    ni.utilities.log(spell_string)
 
@@ -425,7 +405,7 @@ end
 
 local glyph_button = ni.ui.button(tab)
 glyph_button.Text = "Dump Glyphs"
-glyph_button.Callback = function ()
+glyph_button.Callback = function()
    local glyph_string = "--Glyphs Dump\n"
    for slot = 1, GetNumGlyphSockets() do
       local enabled, glyph_type, glyph_id
@@ -436,7 +416,8 @@ glyph_button.Callback = function ()
       end
       if glyph_id and glyph_id ~= 0 then
          local name = ni.spell.info(glyph_id)
-         glyph_string = glyph_string .. string.format("local %s = ni.player.has_glyph(%s) \n", stripname(name), glyph_id)
+         glyph_string = glyph_string ..
+                           string.format("local %s = ni.player.has_glyph(%s) \n", stripname(name), glyph_id)
       end
    end
    ni.utilities.log(glyph_string)
@@ -444,7 +425,7 @@ end
 
 local mounts_button = ni.ui.button(tab)
 mounts_button.Text = "Dump Mounts"
-mounts_button.Callback = function ()
+mounts_button.Callback = function()
    local mounts_string = "--Mounts Dump\n"
    local mounts = ni.mount.mounts()
    for k, v in ni.table.pairs(mounts) do
@@ -469,18 +450,23 @@ end
 
 local type = ni.ui.combobox(tab)
 type.Text = "Type"
-local types ={
-   "bool", --true/false formatted
-   "byte", --number formatted
-   "string", --string formatted
-   "float", --number formatted
-   "double", --number formatted
-   "int16","short", --number formatted
-   "int32","int", --number formatted
-   "int64", --string formatted formatted
-   "uint16","ushort", --number formatted
-   "uint","uint32", --number formatted
-   "uint64","GUID" --string formatted
+local types = {
+   "bool", -- true/false formatted
+   "byte", -- number formatted
+   "string", -- string formatted
+   "float", -- number formatted
+   "double", -- number formatted
+   "int16",
+   "short", -- number formatted
+   "int32",
+   "int", -- number formatted
+   "int64", -- string formatted formatted
+   "uint16",
+   "ushort", -- number formatted
+   "uint",
+   "uint32", -- number formatted
+   "uint64",
+   "GUID" -- string formatted
 }
 for key, value in pairs(types) do
    type:Add(value)

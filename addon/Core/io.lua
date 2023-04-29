@@ -149,6 +149,26 @@ function ni.io.load_buffer(file, chunk)
 end
 
 --[[--
+Checks if the file exists and is readable
+ 
+Parameters:
+- **file** `string`
+ 
+Returns:
+- **exists** `boolean`
+@param file string
+]]
+function ni.io.file_exists(file)
+   local f = io.open(file, "r")
+   if f ~= nil then
+      io.close(f)
+      return true
+   else
+      return false
+   end
+end
+
+--[[--
 This function will load the selected file into the lua state.
  
 Parameters:

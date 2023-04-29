@@ -115,7 +115,7 @@ local keys = {
    [0xA0] = "LSHIFT", -- Left SHIFT key
    [0xA1] = "RSHIFT", -- Right SHIFT key
    [0xA2] = "LCONTROL", -- Left CONTROL key
-   [0xA3] = "RCONTROL", -- Right CONTROL key
+   [0xA3] = "RCONTROL" -- Right CONTROL key
 }
 
 -- Input table to track down/up states
@@ -182,7 +182,7 @@ local function input_handler(state, key)
    -- State of 0x100 and 0x104 is for down on keys or system keys
    if state == 0x100 or state == 0x104 then
       update_input_state(key, true)
-   -- State of 0x101 and 0x105 is for up on keys or system keys
+      -- State of 0x101 and 0x105 is for up on keys or system keys
    elseif state == 0x101 or state == 0x105 then
       update_input_state(key, false)
    end

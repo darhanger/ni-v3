@@ -4,13 +4,12 @@ local ni = ...
 
 local build = ni.client.build()
 local UnitGroupRolesAssigned = ni.client.get_function("UnitGroupRolesAssigned")
---Removed in Mop
+-- Removed in Mop
 local GetNumRaidMembers = ni.client.get_function("GetNumRaidMembers")
 local GetNumPartyMembers = ni.client.get_function("GetNumPartyMembers")
---Added in MoP
+-- Added in MoP
 local IsInRaid = ni.client.get_function("IsInRaid")
 local GetNumGroupMembers = ni.client.get_function("GetNumGroupMembers")
-
 
 ni.group = {}
 
@@ -45,7 +44,7 @@ ni.group.is_tank = function(target)
    local class = ni.unit.class(target)
    if class == "WARRIOR" and ni.unit.has_aura(target, 71) then
       return true;
-   elseif class == "DRUID" and (ni.unit.buff(target, 9634, "EXACT") or ni.unit.buff(target, 5487, "EXACT"))	then
+   elseif class == "DRUID" and (ni.unit.buff(target, 9634, "EXACT") or ni.unit.buff(target, 5487, "EXACT")) then
       return true;
    elseif class == "PALADIN" and ni.unit.buff(target, 25780) then
       return true;
@@ -79,7 +78,7 @@ Check to see if the player is in a raid group
 Returns:
 - **in_raid** `boolean`
 ]]
-ni.group.in_raid = function ()
+ni.group.in_raid = function()
    if build == 18414 then
       return IsInRaid()
    end
@@ -92,7 +91,7 @@ Get the number of members in the players raid or party
 Returns:
 - **size** `number`
 ]]
-ni.group.size = function ()
+ni.group.size = function()
    if build == 18414 then
       return GetNumGroupMembers()
    end
@@ -100,4 +99,30 @@ ni.group.size = function ()
       return GetNumRaidMembers()
    end
    return GetNumPartyMembers()
+end
+
+function ni.group.get_tanks()
+   local tanks = {}
+   for k, v in ni.table.pairs(ni.members) do
+      if type(v) == "table" then
+         if ni.group.is_tank(v.guid) then
+            ni.table.insert(tanks, v)
+         end
+      end
+   end
+   return tanks
+end
+
+function ni.group.in_group()
+   if ni.group.size() > 0 then
+      return true
+   end
+   return false
+end
+
+function ni.group.in_group_or_raid()
+   if ni.group.in_raid() or ni.group.in_group() then
+      return true
+   end
+   return false
 end

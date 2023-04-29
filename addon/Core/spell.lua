@@ -15,6 +15,7 @@ local IsCurrentSpell = ni.client.get_function("IsCurrentSpell")
 local type = ni.client.get_function("type")
 local build = ni.client.build()
 local delayed_casts = {}
+ni.spell.blocked_spells = {}
 
 --[[--
 Gets the spell information
@@ -132,8 +133,53 @@ function ni.spell.delay_cast(spell, target, delay)
       end
    end
    ni.spell.cast(spell, target)
-	delayed_casts[spell] = ni.client.get_time()
-	return true
+   delayed_casts[spell] = ni.client.get_time()
+   return true
+end
+
+--[[--
+Casts a spell with helping functions
+ 
+Parameters:
+- **func** `function`
+- **spell** `string or number`
+- **target** `string`
+
+@param func
+@param spell
+@param[opt] target string
+]]
+function ni.spell.caster(func, ...)
+   local spell, target = ...
+   local friendly = false
+
+   for k, v in ni.table.pairs(ni.spell.blocked_spells) do
+      if ni.client.get_time() - v > 1 then
+         ni.spell.blocked_spells[k] = nil
+      end
+   end
+
+   if spell == 0 or not spell or not ni.spell.available(spell) then
+      return false
+   end
+
+   for k, v in ni.table.pairs(ni.spell.blocked_spells) do
+      if spell == k then
+         return false
+      end
+   end
+
+   if target then
+      friendly = not ni.player.can_attack(target)
+      if ni.spell.valid(spell, target, true, true, friendly) then
+         func(spell, target)
+         ni.utilities.log("Casting " .. select(1, ni.spell.info(spell)) .. " on " .. ni.unit.name(target))
+         return true
+      end
+   else
+      func(spell)
+      ni.utilities.log("Casting " .. select(1, ni.spell.info(spell)))
+   end
 end
 
 --[[--
@@ -378,11 +424,15 @@ function ni.spell.valid(spell, target, is_facing, line_of_sight, is_friendly)
    local name, _, _, cost, _, power_type = ni.spell.info(spell)
    if type(spell) == "string" then
       spell = ni.spell.id(spell)
-      if spell == 0 then
-         return false
-      end
    end
-   if not ni.spell.in_range(name, target) then
+   if spell == 0 then
+      return false
+   end
+   if not ni.spell.in_range(name, target) and
+      (select(6, ni.spell.info(spell)) ~= 0 and ni.player.distance(target) > select(6, ni.spell.info(spell))) then
+      return false
+   end
+   if not ni.spell.is_instant(spell) and ni.player.is_moving() then
       return false
    end
    if not ni.spell.known(spell) then
@@ -392,6 +442,15 @@ function ni.spell.valid(spell, target, is_facing, line_of_sight, is_friendly)
       return false
    end
    if ni.spell.on_cooldown(spell) then
+      return false
+   end
+   if ni.spell.on_gcd() then
+      return false
+   end
+   if ni.player.is_channeling() then
+      return false
+   end
+   if ni.player.is_casting() then
       return false
    end
    if is_facing and not ni.player.is_facing(target, 120) then
