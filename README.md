@@ -9,7 +9,7 @@ Profile Framework for World of Warcraft and its older expansions.
 
 ![Lua](https://img.shields.io/badge/Lua-2C2D72?style=flat-squaree&logo=lua&logoColor=white)
 ![C++](https://img.shields.io/badge/C%2B%2B-00599C?style=flat-squaree&logo=c%2B%2B&logoColor=white)
-[![License](https://img.shields.io/github/license/darhanger/ni-v3?style=flat-square)](https://github.com/darhanger/ni-v3/releases) 
+[![License](https://img.shields.io/github/license/darhanger/ni-v3?style=flat-square)](https://github.com/darhanger/ni-v3/blob/main/License) 
 [![Last Release](https://img.shields.io/github/v/release/darhanger/ni-v3?style=flat-square)](https://github.com/darhanger/ni-v3)
 [![GitHub Last Download](https://img.shields.io/github/downloads/darhanger/ni-v3/3.3.3/total?style=flat-square)](https://github.com/darhanger/ni-v3/releases/tag/3.3.3)
 [![GitHub All Releases](https://img.shields.io/github/downloads/darhanger/ni-v3/total?style=flat-square)](https://github.com/darhanger/ni-v3/releases)
